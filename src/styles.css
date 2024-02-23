@@ -43,7 +43,7 @@ header {
 }
 
 .header.sticky {
-    background: var(--bg-color);
+    backdrop-filter: blur(10px);
 }
 
 .logo {
@@ -80,16 +80,38 @@ header {
 section {
     min-height: 100vh;
     padding: 10rem 9% 2rem;
+    /* opacity: 0; */
 }
 
 .home {
     display: flex;
     align-items: center;
-    padding: 0 9%;
-    background: url(./assets/img/home.jpg) no-repeat;
+    justify-content: space-between;
+    padding: 0 0 0 9%;
+    /* background: url(./assets/img/monster.jpg) no-repeat;
     background-size: 50%;
-    background-position: right;
+    background-position: right; */
+    overflow: hidden;
 }
+
+.home > img {
+    height: 100%;
+    max-height: 100vh;
+    filter: brightness(0.7); 
+    opacity: 0.9;
+}
+
+.home::after {
+    box-shadow: inset 118px -118px 98px 27px var(--bg-color);
+    content: '';
+    display: block;
+    height: 101vh;
+    position: absolute;
+    top: 0;
+    right: 0;
+    /* width: 63%; */
+    aspect-ratio: 839 / 1239;
+  }
 
 .home-content {
     max-width: 61rem;
@@ -213,6 +235,7 @@ section {
 
 .home-sci {
     position: absolute;
+    z-index: 1;
     bottom: 4rem;
     width: 170px;
     display: flex;
@@ -263,7 +286,6 @@ section {
     width: 45%;
     height: 100%;
     background: transparent;
-    transition: 3s;
 }
 
 .home-imgHover:hover {
@@ -277,7 +299,7 @@ section {
     align-items: center;
     flex-direction: column;
     gap: 2rem;
-    background: var(--second-bg-color);
+    /* background: var(--second-bg-color); */
     padding-bottom: 6;
 }
 
@@ -354,6 +376,8 @@ span {
     align-items: center;
     flex-direction: column;
     padding-bottom: 5rem;
+    background: var(--second-bg-color);
+
 }
 
 .education .education-row {
@@ -381,6 +405,11 @@ span {
 .education-box .education-content {
     position: relative;
     padding-left: 2rem;
+    visibility: hidden;
+}
+
+.education-box .education-content.content-active {
+    visibility: visible;
 }
 
 .education-box .education-content::before {
@@ -440,7 +469,7 @@ span {
 
 .skills {
     padding-bottom: 7rem;
-    background: var(--second-bg-color);
+    /* background: var(--second-bg-color); */
 }
 
 .skills h2 {
@@ -521,6 +550,10 @@ span {
     height: 100%;
     border-radius: 0.3rem;
     background: var(--main-color);
+    visibility: hidden;
+}
+.skills-content .progress .bar span.bar-active {
+    visibility: visible;
 }
 
 .skills-column:nth-child(1) .skills-content .progress:nth-child(1) .bar span {
@@ -751,13 +784,33 @@ section:nth-child(odd) .animate.scroll,
     .header {
         padding: 2rem 4%;
     }
-
+        
     section {
         padding: 10rem 4% 2rem;
     }
 
     .home {
         padding: 0 4%;
+        flex-direction: column;
+        justify-content: center;
+        align-items: revert-layer;
+    }
+
+    section.home > img {
+        position: absolute;
+        z-index: 0;
+        filter: brightness(0.5);
+        background-blend-mode: color-dodge;
+        opacity: 0.8;
+        width: 100vw;
+        left: 0;
+        height: unset;
+        max-height: unset;
+        top: 0;
+    }
+
+    section.home::after {
+        display: none!important;
     }
 
     .footer {
@@ -772,9 +825,6 @@ section:nth-child(odd) .animate.scroll,
 }
 
 @media (max-width: 768px) {
-    .header {
-        background: var(--bg-color);
-    }
     #menu-icon {
         display: block;
     }
@@ -845,10 +895,6 @@ section:nth-child(odd) .animate.scroll,
         flex-direction: column;
     }
 
-    .home-sci {
-        width: 38px;
-        height: 38px;
-    }
 }
 
 @media (max-width: 462px) {
