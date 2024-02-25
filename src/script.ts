@@ -1,8 +1,13 @@
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/all";
+import "splitting/dist/splitting.css";
+import "splitting/dist/splitting-cells.css";
+import Splitting from "splitting";
+
 import "boxicons/css/boxicons.min.css";
 
 gsap.registerPlugin(ScrollTrigger);
+Splitting();
 
 // toggle mobile navar
 let menuIcon: HTMLElement = document.querySelector("#menu-icon") as HTMLElement;
@@ -106,7 +111,6 @@ const headerSection = {
     subtitle: animateSections[0].querySelector(".home-content p"),
     buttons: animateSections[0].querySelector(".home-content .btn-box"),
     image: animateSections[0].querySelector("img"),
-    socials: animateSections[0].querySelector(".home-sci"),
 }
 
 
@@ -116,7 +120,6 @@ const initialPositions = {
     title: { x: -100, opacity: 0 },
     subtitle: { x: -100, opacity: 0 },
     buttons: { x: -100, opacity: 0 },
-    socials: { y: 100, opacity: 0 },
     image: { x: window.innerWidth < 991 ? 0 : 100, opacity: 0 },
 };
 
@@ -128,7 +131,6 @@ tl.set(headerSection.section, { scale: initialPositions.section.scale });
 tl.set(headerSection.title, { x: initialPositions.title.x, opacity: initialPositions.title.opacity });
 tl.set(headerSection.subtitle, { x: initialPositions.subtitle.x, opacity: initialPositions.subtitle.opacity });
 tl.set(headerSection.buttons, { x: initialPositions.buttons.x, opacity: initialPositions.buttons.opacity });
-tl.set(headerSection.socials, { y: initialPositions.socials.y, opacity: initialPositions.socials.opacity });
 tl.set(headerSection.image, { x: initialPositions.image.x, opacity: initialPositions.image.opacity });
 
 // Animation with staggered timings
@@ -136,5 +138,82 @@ tl.to(headerSection.title, { x: 0, opacity: 1, duration: 1, ease: "power2.out" }
 tl.to(headerSection.image, { x: 0, opacity: 1, duration: window.innerWidth < 991 ? 3 : 1, ease: "power2.out" }, "-=0.8");
 tl.to(headerSection.subtitle, { x: 0, opacity: 1, duration: 1, ease: "power2.out" }, window.innerWidth < 991 ? "-=2.8" : "-=0.8");
 tl.to(headerSection.buttons, { x: 0, opacity: 1, duration: 1, ease: "power2.out" }, window.innerWidth < 991 ? "-=2.8" : "-=0.8");
-tl.to(headerSection.socials, { y: 0, opacity: 1, duration: 1, ease: "power2.out" }, window.innerWidth < 991 ? "-=2.8" : "-=0.8");
 tl.to(headerSection.section, { scale: 1, duration: 2, ease: "power1.out" }, window.innerWidth < 991 ? "-=3.7" : "-=1.7");
+
+
+
+// head name animation
+
+const nameChars = document.querySelectorAll(".char")
+setInterval(function() {
+    gsap.to(nameChars, {
+        y: -20,
+        color: "#46caff",
+        duration: 0.2,
+        stagger: 0.03,
+    })
+    gsap.to(nameChars, {
+        y: 0,
+        color: "#00abf0",
+        duration: 0.5,
+        stagger: 0.03,
+        delay: 0.2
+    })
+}, 2000)
+
+// head hand wave animation
+
+const waveHand = document.querySelector("#home-wave") as HTMLElement;
+const emojis = ["👋", "🙃", "😏", "😍", "😇",  "✨", "👀"]; // Array of emojis
+let emojiIndex = 0;
+let isFirstWave = true; 
+
+setInterval(function() {
+    let isTurningEmoji = false
+    if(!isFirstWave) {
+        const newEmoji = chooseEmoji();
+        if(newEmoji === "🙃") {
+            isTurningEmoji = true;
+        }
+        waveHand.textContent = newEmoji;
+    }
+    gsap.to(waveHand, {
+        rotate: -20,
+        scale: 1.3,
+        duration: 0.2,
+    })
+    gsap.to(waveHand, {
+        rotate: 20,
+        duration: 0.2,
+        delay: 0.2
+    })
+    gsap.to(waveHand, {
+        rotate: -20,
+        duration: 0.2,
+        delay: 0.4
+    })
+    gsap.to(waveHand, {
+        rotate: (isTurningEmoji === false ? 20 : -180),
+        duration: (isTurningEmoji === false ? 0.2 : 1),
+        delay: 0.6
+    })
+    gsap.to(waveHand, {
+        rotate: (isTurningEmoji === false ? 0 : -180),
+        scale: 1,
+        duration: 0.2,
+        delay: (isTurningEmoji === false ? 0.8 : 1.2)
+    })
+    isFirstWave = false;
+}, 4200)
+
+function chooseEmoji() {
+    
+    if(emojiIndex >= emojis.length) {
+        console.log("resetted emojiindex")
+        emojiIndex = 1;
+    } else {
+        emojiIndex++
+    }
+
+    return emojis[emojiIndex - 1];
+}
