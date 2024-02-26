@@ -1,12 +1,12 @@
 import gsap from "gsap";
-import { ScrollTrigger } from "gsap/all";
+import { ScrollTrigger, TextPlugin } from "gsap/all";
 import "splitting/dist/splitting.css";
 import "splitting/dist/splitting-cells.css";
 import Splitting from "splitting";
 
 import "boxicons/css/boxicons.min.css";
 
-gsap.registerPlugin(ScrollTrigger);
+gsap.registerPlugin(ScrollTrigger, TextPlugin);
 Splitting();
 
 // toggle mobile navar
@@ -54,6 +54,76 @@ const progressBars: NodeListOf<HTMLElement> = document.querySelectorAll(".progre
 const educationContents: NodeListOf<HTMLElement> = document.querySelectorAll(".education-content");
 const educationBox: HTMLElement = document.querySelector(".education-box") as HTMLElement;
 
+class ProgressBar {
+    private progressBar: HTMLElement;
+    private progressText: HTMLElement;
+    private percent: number;
+
+    constructor(progressBarElement: HTMLElement) {
+        if (!progressBarElement) {
+            throw new Error("ProgressBar element not found");
+        }
+        const startPercent = this.percentwidthfifth(progressBarElement);
+        this.progressBar = progressBarElement as HTMLElement;
+        this.progressText = this.progressBar.parentElement?.parentElement?.querySelector("h3 span") as HTMLElement;
+        if(!this.progressText) {
+            throw new Error("ProgressText not found")
+        }
+        console.log(this.progressText)
+        this.percent = startPercent; // Initialize with startPercent or default to 0
+        this.updateProgress(startPercent); // Initialize the progress bar and text
+    }
+
+    updateProgress(newPercent: number): void {
+        // Update the internal percent value
+        this.percent = newPercent;
+
+        // // Animate the progress bar width
+        // gsap.to(this.progressBar, {
+        //     duration: 1, // Duration in seconds
+        //     width: this.percent + "%", // Animate width to the new percent
+        //     ease: "linear", // You can customize the easing function
+        // });
+        console.log(newPercent)
+        gsap.from(this.progressBar, {
+            width: 0,
+            opacity: 0,
+            duration: 2,
+            ease: this.percent > 75 ? "elastic.out(1,1)" : "elastic.out(1,0.8)",
+            stagger: 0.2,
+            onStart: () => {
+                this.progressBar.classList.add("bar-active");
+            },
+            onUpdate: () => {
+                this.progressText.innerHTML = this.percentwidth(this.progressBar).toString() + "%";
+            },
+            onComplete: () => {
+                this.progressText.innerHTML = this.percentwidthfifth(this.progressBar).toString() + "%";
+            }
+        });
+
+        // Animate the percentage text
+        // if (this.progressText) {
+        //     gsap.to(this.progressText, {
+        //         duration: 1, // Match duration for synchronized animation
+        //         text: this.percent + "%", // Animate text to the new percent
+        //         ease: "linear", // Match easing function for consistency
+        //         snap: { text: 1 }, // Optional: snap to whole numbers
+        //     });
+        // }
+    }
+
+    percentwidthfifth(elem: HTMLElement): number {
+        var pa: HTMLElement = elem.parentElement || elem;
+        const percentValue = ((elem.offsetWidth/(pa.offsetWidth - 10))*100)
+        return Math.ceil(percentValue / 5) * 5;
+    }
+
+    percentwidth(elem: HTMLElement): number {
+        var pa: HTMLElement = elem.parentElement || elem;
+        return Math.round(((elem.offsetWidth/(pa.offsetWidth - 10))*100));
+    }
+}
 // create a gsap animation for each section
 animateSections.forEach((section: HTMLElement) => {
     // skip the first section
@@ -67,23 +137,16 @@ animateSections.forEach((section: HTMLElement) => {
                 start: "top 50%",
             },
             onStart: () => {
+                console.log("hello world")
                 if (section.classList.contains("skills")) {
                     // add the progess bar animation for section "skills"
-                    gsap.from(progressBars, {
-                        width: 0,
-                        opacity: 0,
-                        duration: 2,
-                        ease: "elastic.out(1,0.8)",
-                        stagger: 0.2,
-                        onStart: () => {
-                            progressBars.forEach((progressBar) => {
-                                // make the progress bars visible once the animation starts
-                                progressBar.classList.add("bar-active");
-                            });
-                        },
-                    });
-                } else if (section.classList.contains("education")) {
+                    console.log("hi")
+                    progressBars.forEach((progressBar) => {
+                        const thisProgressBar = new ProgressBar(progressBar)
+                        console.log(thisProgressBar)    
+                    })
                     
+                } else if (section.classList.contains("education")) {
                     // add the education contents animation for section "education"
                     gsap.from(educationContents, {
                         opacity: 0,
@@ -101,8 +164,7 @@ animateSections.forEach((section: HTMLElement) => {
             },
         });
     }
-})
-
+});
 
 // start header animation
 const headerSection = {
@@ -111,8 +173,7 @@ const headerSection = {
     subtitle: animateSections[0].querySelector(".home-content p"),
     buttons: animateSections[0].querySelector(".home-content .btn-box"),
     image: animateSections[0].querySelector("img"),
-}
-
+};
 
 // Define the initial positions
 const initialPositions = {
@@ -140,39 +201,37 @@ tl.to(headerSection.subtitle, { x: 0, opacity: 1, duration: 1, ease: "power2.out
 tl.to(headerSection.buttons, { x: 0, opacity: 1, duration: 1, ease: "power2.out" }, window.innerWidth < 991 ? "-=2.8" : "-=0.8");
 tl.to(headerSection.section, { scale: 1, duration: 2, ease: "power1.out" }, window.innerWidth < 991 ? "-=3.7" : "-=1.7");
 
-
-
 // head name animation
 
-const nameChars = document.querySelectorAll(".char")
-setInterval(function() {
+const nameChars = document.querySelectorAll(".char");
+setInterval(function () {
     gsap.to(nameChars, {
         y: -20,
         color: "#46caff",
         duration: 0.2,
         stagger: 0.03,
-    })
+    });
     gsap.to(nameChars, {
         y: 0,
         color: "#00abf0",
         duration: 0.5,
         stagger: 0.03,
-        delay: 0.2
-    })
-}, 2000)
+        delay: 0.2,
+    });
+}, 2000);
 
 // head hand wave animation
 
 const waveHand = document.querySelector("#home-wave") as HTMLElement;
-const emojis = ["👋", "🙃", "😏", "😍", "😇",  "✨", "👀"]; // Array of emojis
+const emojis = ["🙃", "😏", "😍", "😇", "✨", "👀"]; // Array of emojis
 let emojiIndex = 0;
-let isFirstWave = true; 
+let isFirstWave = true;
 
-setInterval(function() {
-    let isTurningEmoji = false
-    if(!isFirstWave) {
+setInterval(function () {
+    let isTurningEmoji = false;
+    if (!isFirstWave) {
         const newEmoji = chooseEmoji();
-        if(newEmoji === "🙃") {
+        if (newEmoji === "🙃") {
             isTurningEmoji = true;
         }
         waveHand.textContent = newEmoji;
@@ -181,38 +240,37 @@ setInterval(function() {
         rotate: -20,
         scale: 1.3,
         duration: 0.2,
-    })
+    });
     gsap.to(waveHand, {
         rotate: 20,
         duration: 0.2,
-        delay: 0.2
-    })
+        delay: 0.2,
+    });
     gsap.to(waveHand, {
         rotate: -20,
         duration: 0.2,
-        delay: 0.4
-    })
+        delay: 0.4,
+    });
     gsap.to(waveHand, {
-        rotate: (isTurningEmoji === false ? 20 : -180),
-        duration: (isTurningEmoji === false ? 0.2 : 1),
-        delay: 0.6
-    })
+        rotate: isTurningEmoji === false ? 20 : -180,
+        duration: isTurningEmoji === false ? 0.2 : 1,
+        delay: 0.6,
+    });
     gsap.to(waveHand, {
-        rotate: (isTurningEmoji === false ? 0 : -180),
+        rotate: isTurningEmoji === false ? 0 : -180,
         scale: 1,
         duration: 0.2,
-        delay: (isTurningEmoji === false ? 0.8 : 1.2)
-    })
+        delay: isTurningEmoji === false ? 0.8 : 1.2,
+    });
     isFirstWave = false;
-}, 4200)
+}, 3200);
 
 function chooseEmoji() {
-    
-    if(emojiIndex >= emojis.length) {
-        console.log("resetted emojiindex")
+    if (emojiIndex >= emojis.length) {
+        console.log("resetted emojiindex");
         emojiIndex = 1;
     } else {
-        emojiIndex++
+        emojiIndex++;
     }
 
     return emojis[emojiIndex - 1];
