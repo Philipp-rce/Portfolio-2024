@@ -69,22 +69,12 @@ class ProgressBar {
         if(!this.progressText) {
             throw new Error("ProgressText not found")
         }
-        console.log(this.progressText)
-        this.percent = startPercent; // Initialize with startPercent or default to 0
-        this.updateProgress(startPercent); // Initialize the progress bar and text
+        this.percent = startPercent;
+        this.updateProgress(startPercent);
     }
 
     updateProgress(newPercent: number): void {
-        // Update the internal percent value
         this.percent = newPercent;
-
-        // // Animate the progress bar width
-        // gsap.to(this.progressBar, {
-        //     duration: 1, // Duration in seconds
-        //     width: this.percent + "%", // Animate width to the new percent
-        //     ease: "linear", // You can customize the easing function
-        // });
-        console.log(newPercent)
         gsap.from(this.progressBar, {
             width: 0,
             opacity: 0,
@@ -101,16 +91,6 @@ class ProgressBar {
                 this.progressText.innerHTML = this.percentwidthfifth(this.progressBar).toString() + "%";
             }
         });
-
-        // Animate the percentage text
-        // if (this.progressText) {
-        //     gsap.to(this.progressText, {
-        //         duration: 1, // Match duration for synchronized animation
-        //         text: this.percent + "%", // Animate text to the new percent
-        //         ease: "linear", // Match easing function for consistency
-        //         snap: { text: 1 }, // Optional: snap to whole numbers
-        //     });
-        // }
     }
 
     percentwidthfifth(elem: HTMLElement): number {
@@ -137,13 +117,10 @@ animateSections.forEach((section: HTMLElement) => {
                 start: "top 50%",
             },
             onStart: () => {
-                console.log("hello world")
                 if (section.classList.contains("skills")) {
                     // add the progess bar animation for section "skills"
-                    console.log("hi")
                     progressBars.forEach((progressBar) => {
-                        const thisProgressBar = new ProgressBar(progressBar)
-                        console.log(thisProgressBar)    
+                        new ProgressBar(progressBar)
                     })
                     
                 } else if (section.classList.contains("education")) {
@@ -165,6 +142,9 @@ animateSections.forEach((section: HTMLElement) => {
         });
     }
 });
+
+
+
 
 // start header animation
 const headerSection = {
@@ -201,8 +181,11 @@ tl.to(headerSection.subtitle, { x: 0, opacity: 1, duration: 1, ease: "power2.out
 tl.to(headerSection.buttons, { x: 0, opacity: 1, duration: 1, ease: "power2.out" }, window.innerWidth < 991 ? "-=2.8" : "-=0.8");
 tl.to(headerSection.section, { scale: 1, duration: 2, ease: "power1.out" }, window.innerWidth < 991 ? "-=3.7" : "-=1.7");
 
-// head name animation
 
+
+
+
+// title wave animations
 const nameChars = document.querySelectorAll(".char");
 setInterval(function () {
     gsap.to(nameChars, {
@@ -220,8 +203,10 @@ setInterval(function () {
     });
 }, 2000);
 
-// head hand wave animation
 
+
+
+// head hand wave animation
 const waveHand = document.querySelector("#home-wave") as HTMLElement;
 const emojis = ["🙃", "😏", "😍", "😇", "✨", "👀"]; // Array of emojis
 let emojiIndex = 0;
@@ -267,7 +252,6 @@ setInterval(function () {
 
 function chooseEmoji() {
     if (emojiIndex >= emojis.length) {
-        console.log("resetted emojiindex");
         emojiIndex = 1;
     } else {
         emojiIndex++;
@@ -275,3 +259,101 @@ function chooseEmoji() {
 
     return emojis[emojiIndex - 1];
 }
+
+
+
+// contact emoji animation
+
+const contactButton = document.querySelector(".contact-mail-wrapper a") as HTMLElement;
+const contactEmojiList = ["🙃", "😍", "😇", "✨", "👀", "🍀", '🍃', '💕', '🔥', '💖', '🙌', '👋', '🎉', '🎶', '🐱‍🏍', '🌾', '🌹'] as Array<string>
+const contactEmojiPositionFactor = [
+    {"x": 1.0, "y": 0.5},
+    {"x": 0.966, "y": 0.681},
+    {"x": 0.870, "y": 0.837},
+    {"x": 0.723, "y": 0.948},
+    {"x": 0.546, "y": 0.998},
+    {"x": 0.363, "y": 0.981},
+    {"x": 0.199, "y": 0.899},
+    {"x": 0.075, "y": 0.763},
+    {"x": 0.009, "y": 0.592},
+    {"x": 0.009, "y": 0.408},
+    {"x": 0.075, "y": 0.237},
+    {"x": 0.199, "y": 0.101},
+    {"x": 0.363, "y": 0.019},
+    {"x": 0.546, "y": 0.002},
+    {"x": 0.723, "y": 0.052},
+    {"x": 0.870, "y": 0.163},
+    {"x": 0.966, "y": 0.319}
+]
+contactEmojiList.forEach((emoji) => {
+    const div = document.createElement("div");
+    div.innerHTML = emoji
+    div.classList.add("mail-icon");
+    contactButton.parentElement?.appendChild(div)
+})
+const contactEmojis = document.querySelectorAll(".contact-mail-wrapper .mail-icon") as NodeListOf<HTMLElement>;
+const contactSparkles = document.querySelectorAll(".sparkle") as NodeListOf<HTMLElement>
+
+contactEmojis.forEach((emoji, index) => {
+    gsap.set(emoji, {
+        rotate: index % 2 ? 180 : -180,
+    })
+})
+gsap.set(contactSparkles, {
+    scale: 0
+})
+gsap.to(contactSparkles[0], {
+    rotate: 360,
+    duration: 240,
+    repeat: -1,
+})
+gsap.to(contactSparkles[1], {
+    rotate: -360,
+    duration: 400,
+    repeat: -1,
+})
+
+contactButton.addEventListener("mouseover", function() {
+    const contactEmojiPositionBounds = contactButton.parentElement?.parentElement?.getBoundingClientRect() as DOMRect;
+
+    gsap.killTweensOf(".mail-icon");
+    gsap.killTweensOf(contactSparkles, "scale, opacity");
+
+    contactEmojis.forEach((emoji, index) => {
+        gsap.to(emoji, {
+            x: (contactEmojiPositionFactor[index].x - 0.5) * contactEmojiPositionBounds?.width / 1.5,
+            y: (contactEmojiPositionFactor[index].y - 0.5) * contactEmojiPositionBounds?.height / 1,
+            rotate: 0,
+            duration: index % 2 ? 0.7 + contactEmojiPositionFactor[index].x / 2 : 0.7 + contactEmojiPositionFactor[index].x / 1.5 ,           
+            ease: "power4.out"
+        })
+    })
+    gsap.to(contactSparkles, {
+        scale: 2,
+        opacity: 1,
+        duration: 1,
+        ease: "power4.out"
+    })
+})
+contactButton.addEventListener("mouseleave", function(event: any) {
+    if(event.toElement && event.toElement.classList.contains("mail-icon")) return;
+
+    gsap.killTweensOf(".mail-icon");
+    gsap.killTweensOf(contactSparkles, "scale, opacity");
+
+    contactEmojis.forEach((emoji, index) => {
+        gsap.to(emoji, {
+            x: 0,
+            y: 0,
+            rotate: index % 2 ? 180 : -180,
+            duration: index % 2 ? 0.7 + contactEmojiPositionFactor[index].x / 2 : 1 + contactEmojiPositionFactor[index].x / 1.5 ,           
+            ease: "power2.out"
+        })
+    })
+    gsap.to(contactSparkles, {
+        scale: 0,
+        opacity: 0,
+        duration: 0.5,
+        ease: "power1.out"
+    })
+})
