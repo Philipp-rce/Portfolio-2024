@@ -12,10 +12,13 @@
 }
 
 :root {
-    --bg-color: #081b29;
-    --second-bg-color: #112e42;
+    --bg-color: #000022;
+    --second-bg-color: #060642;
+    --bg-opaque: #000022bb;
     --text-color: #ededed;
-    --main-color: #00abf0;
+    --main-color: #E28413;
+    --main-color-highlight: #ffee00;
+    --main-color-dark: #d19143;
 }
 
 html {
@@ -181,8 +184,9 @@ section {
     position: relative;
     display: flex;
     justify-content: space-between;
-    width: 34.5rem;
+    width: 100%;
     height: 5rem;
+    gap: 1rem;
 }
 
 .btn-box .btn {
@@ -675,6 +679,16 @@ span {
     font-size: 1.6rem;
 }
 
+.footer-text a {
+    font-size: 1.6rem;
+    color: var(--main-color);
+    transition: 0.3s;
+}
+
+.footer-text a:hover {
+    color: var(--main-color-highlight);
+}
+
 .footer-iconTop a {
     position: relative;
     display: inline-flex;
@@ -760,6 +774,73 @@ section:nth-child(odd) .animate.scroll,
 .footer.show-animate .animate.scroll {
     transition-delay: calc(0.3s * var(--i));
     width: 0;
+}
+
+#datenschutz-open {
+    cursor: pointer;
+}
+
+#datenschutz {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 999;
+    background: transparent;
+    /* backdrop-filter: blur(10px); */
+}
+
+#datenschutz::backdrop {
+    background: var(--bg-opaque);
+    backdrop-filter: blur(10px);
+}
+
+#datenschutz .datenschutz-outer {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#datenschutz .datenschutz-inner {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    flex-direction: column;
+    height: 100%;
+    width: 100%;
+    padding: 50px 0px 0px 50px;
+}
+
+#datenschutz .datenschutz-close {
+    font-size: 5rem;
+    position: absolute;
+    top: 20px;
+    right: 40px;
+    color: var(--main-color);
+    cursor: pointer;
+    font-weight: 700;
+    transition: 0.3s;
+    transform: rotate(180deg);
+}
+
+#datenschutz .datenschutz-close:hover {
+    color: var(--text-color);
+    transform: rotate(0deg) scale(1.2);
+}
+
+#datenschutz .datenschutz-inner h2 span {
+    font-size: 60px;
+}
+
+#datenschutz .datenschutz-text {
+    font-size: 20px;
+    margin: 20px 0;
+    overflow-y: auto;
+    height: 100%;
+    color: var(--text-color);
 }
 
 /* BREAKPOINTS */

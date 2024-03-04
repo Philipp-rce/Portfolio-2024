@@ -52,13 +52,14 @@ window.onscroll = () => {
 const animateSections: HTMLElement[] = gsap.utils.toArray("section");
 const progressBars: NodeListOf<HTMLElement> = document.querySelectorAll(".progress .bar span");
 const educationContents: NodeListOf<HTMLElement> = document.querySelectorAll(".education-content");
-const educationBox: HTMLElement = document.querySelector(".education-box") as HTMLElement;
 
+// Progress Bar Class to animate the progress bars in the "skills" section
 class ProgressBar {
     private progressBar: HTMLElement;
     private progressText: HTMLElement;
     private percent: number;
 
+    // initialize the progress bar and the progress text
     constructor(progressBarElement: HTMLElement) {
         if (!progressBarElement) {
             throw new Error("ProgressBar element not found");
@@ -73,6 +74,7 @@ class ProgressBar {
         this.updateProgress(startPercent);
     }
 
+    // animate the progress bar
     updateProgress(newPercent: number): void {
         this.percent = newPercent;
         gsap.from(this.progressBar, {
@@ -82,35 +84,42 @@ class ProgressBar {
             ease: this.percent > 75 ? "elastic.out(1,1)" : "elastic.out(1,0.8)",
             stagger: 0.2,
             onStart: () => {
+                // make the progress bar visible once the animation starts
                 this.progressBar.classList.add("bar-active");
             },
             onUpdate: () => {
+                // update the progress text with the current progress
                 this.progressText.innerHTML = this.percentwidth(this.progressBar).toString() + "%";
             },
             onComplete: () => {
+                // When the animation is complete, update the progress text with the final progress
                 this.progressText.innerHTML = this.percentwidthfifth(this.progressBar).toString() + "%";
             }
         });
     }
 
+    // get the width of the progress bar in percentage in steps of 5%
     percentwidthfifth(elem: HTMLElement): number {
         var pa: HTMLElement = elem.parentElement || elem;
         const percentValue = ((elem.offsetWidth/(pa.offsetWidth - 10))*100)
         return Math.ceil(percentValue / 5) * 5;
     }
 
+    // get the width of the progress bar in percentage in steps of 1%
     percentwidth(elem: HTMLElement): number {
         var pa: HTMLElement = elem.parentElement || elem;
         return Math.round(((elem.offsetWidth/(pa.offsetWidth - 10))*100));
     }
 }
+
+
 // create a gsap animation for each section
 animateSections.forEach((section: HTMLElement) => {
     // skip the first section
     if (section !== animateSections[0]) {
         gsap.from(section, {
             opacity: 0,
-            y: 200,
+            y: 20,
             duration: 0.5,
             scrollTrigger: {
                 trigger: section,
@@ -183,26 +192,36 @@ tl.to(headerSection.section, { scale: 1, duration: 2, ease: "power1.out" }, wind
 
 
 
-
-
 // title wave animations
 const nameChars = document.querySelectorAll(".char");
+const nameCharsColors = {
+    first: getComputedStyle(document.documentElement).getPropertyValue('--main-color-highlight'),
+    second: getComputedStyle(document.documentElement).getPropertyValue('--main-color'),
+    third: getComputedStyle(document.documentElement).getPropertyValue('--main-color-dark'),
+};
+
 setInterval(function () {
     gsap.to(nameChars, {
         y: -20,
-        color: "#46caff",
+        color: nameCharsColors.first,
+        textShadow: `0 0 50px ${nameCharsColors.first}, 0 0 80px ${nameCharsColors.second}, 0 0 130px ${nameCharsColors.third}`,
         duration: 0.2,
         stagger: 0.03,
     });
     gsap.to(nameChars, {
         y: 0,
-        color: "#00abf0",
+        color: nameCharsColors.second,
         duration: 0.5,
         stagger: 0.03,
         delay: 0.2,
     });
+    gsap.to(nameChars, {
+        textShadow: "0 0 0px #ffffff00",
+        duration: 2,
+        stagger: 0.03,
+        delay: 0.1,
+    });
 }, 2000);
-
 
 
 
@@ -313,7 +332,11 @@ gsap.to(contactSparkles[1], {
     repeat: -1,
 })
 
-contactButton.addEventListener("mouseover", function() {
+contactButton.addEventListener("mouseover", () => handleContactMouseEnter())
+contactButton.addEventListener("mouseleave", () => handleContactMouseLeave(event))
+
+
+function handleContactMouseEnter() {
     const contactEmojiPositionBounds = contactButton.parentElement?.parentElement?.getBoundingClientRect() as DOMRect;
 
     gsap.killTweensOf(".mail-icon");
@@ -334,8 +357,9 @@ contactButton.addEventListener("mouseover", function() {
         duration: 1,
         ease: "power4.out"
     })
-})
-contactButton.addEventListener("mouseleave", function(event: any) {
+}
+
+function handleContactMouseLeave(event: any) {
     if(event.toElement && event.toElement.classList.contains("mail-icon")) return;
 
     gsap.killTweensOf(".mail-icon");
@@ -356,4 +380,36 @@ contactButton.addEventListener("mouseleave", function(event: any) {
         duration: 0.5,
         ease: "power1.out"
     })
-})
+}
+
+
+
+// privacy dialog modal animation
+
+const privacyDialog = document.querySelector("#datenschutz") as HTMLDialogElement;
+const showPrivacyButton = document.querySelector("#datenschutz-open") as HTMLElement;
+const closePrivacyButton = document.querySelector(".datenschutz-close") as HTMLElement;
+
+showPrivacyButton.addEventListener("click", showPrivacy);
+closePrivacyButton.addEventListener("click", closePrivacy);
+
+function showPrivacy() {
+    privacyDialog.style.opacity = "0";
+    privacyDialog.showModal();
+    gsap.to(privacyDialog, {
+        opacity: 1,
+        duration: 0.5,
+        ease: "power2.out"
+    })
+}
+
+function closePrivacy() {
+    gsap.to(privacyDialog, {
+        opacity: 0,
+        duration: 0.5,
+        ease: "power2.out",
+        onComplete: () => {
+            privacyDialog.close();
+        }
+    })
+}
